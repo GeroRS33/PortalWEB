@@ -17,9 +17,6 @@ import assistantRoutes from './routes/assistantRoutes.js';
 
 dotenv.config();
 
-// Connect to MongoDB
-connectDB();
-
 const app = express();
 
 // Middlewares
@@ -29,8 +26,18 @@ app.use(express.json());
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Serve static assets from the Imagenes folder in the root workspace
+// Serve static assets from the Imagenes folder
 app.use('/images', express.static(path.join(__dirname, '../Imagenes')));
+
+// Middleware to ensure DB connection is established for incoming requests
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
 
 // Register Routes
 app.use('/api/auth', authRoutes);
@@ -56,6 +63,12 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 5001;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT} in development mode`);
-});
+
+// Standalone listener for local development mode
+if (process.env.VERCEL !== '1') {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT} in development mode`);
+  });
+}
+
+export default app;
