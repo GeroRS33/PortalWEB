@@ -1,30 +1,35 @@
 {
-  "version": 2,
-  "services": [
-    {
-      "name": "frontend",
+  "services": {
+    "frontend": {
       "root": "frontend",
       "framework": "vite"
     },
-    {
-      "name": "backend",
+    "backend": {
       "root": "backend",
-      "framework": "express",
-      "route": "/api"
+      "framework": "express"
     }
-  ],
+  },
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "/backend/api/$1"
+      "source": "/api/:path*",
+      "destination": {
+        "service": "backend",
+        "path": "/api/:path*"
+      }
     },
     {
-      "source": "/images/(.*)",
-      "destination": "/backend/images/$1"
+      "source": "/images/:path*",
+      "destination": {
+        "service": "backend",
+        "path": "/images/:path*"
+      }
     },
     {
-      "source": "/(.*)",
-      "destination": "/frontend/$1"
+      "source": "/:path*",
+      "destination": {
+        "service": "frontend",
+        "path": "/:path*"
+      }
     }
   ]
 }
