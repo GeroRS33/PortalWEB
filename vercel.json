@@ -1,15 +1,30 @@
 {
   "version": 2,
-  "builds": [
+  "services": [
     {
-      "src": "backend/server.js",
-      "use": "@vercel/node"
+      "name": "frontend",
+      "root": "frontend",
+      "framework": "vite"
+    },
+    {
+      "name": "backend",
+      "root": "backend",
+      "framework": "express",
+      "route": "/api"
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/(.*)",
-      "dest": "backend/server.js"
+      "source": "/api/(.*)",
+      "destination": "/backend/api/$1"
+    },
+    {
+      "source": "/images/(.*)",
+      "destination": "/backend/images/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/frontend/$1"
     }
   ]
 }
